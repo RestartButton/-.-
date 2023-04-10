@@ -1,0 +1,163 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = Java
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+Parser = SLR
+#RegularDefinitions
+
+
+
+#Tokens
+: [\n\s\r\t]
+
+coment: "##:"[^\n\r]*
+coment_multi: "/*"([^"*"]|"*"+[^"*""/"])*"*"+"/"
+
+
+if: ".-"
+else: ".--."
+while: "--.-."
+do: "-."
+return: "-.-.--"
+for: "-.-"
+
+
+soma: "+"
+mult: "*"
+sub: "-"
+div: "/"
+atrib: "="
+mod: "%"
+
+
+maiorq: ">"
+menorq:"<"
+maiorig:">="
+menorig:"<="
+iguala:"=="
+difere:"!="
+
+
+andlog: "&&"
+orlog: "||"
+not: "!"
+
+
+shfl:"<<"
+shfr:">>"
+bwand:"&"
+bwor:"|"
+bwinv:"~"
+xor:"^"
+
+pontpont: ".."
+endl: "?"
+pont: "."
+virg: ","
+
+abrepar: "("
+fechapar: ")"
+abrecol: "["
+fechacol: "]"
+abrecha: "{"
+fechacha: "}"
+
+
+void: "-..-"
+long: "-.--"
+short: "--.--"
+unsigned: ".--.--.-"
+const: "-.---"
+
+int: ".--"
+char: "--.-"
+string: "---.--"
+double: "-..--."
+float: "--..-"
+boolean: "-..-..-"
+
+
+true: "--.."
+false: "-.--."
+
+litint: [0-9]+
+litchar: "'"[^'\t\n\r]"'"
+litstr: \"[^\"]*\"
+litdouble: [0-9]+"."[0-9]+
+litfloat: [0-9]+"."[0-9]+[Ff]
+
+litbin: "0b"[0-1]+
+lithex: "0x"[0-9A-Fa-f]+
+
+
+
+funid: [a-z][0-9A-Z_]*
+varid: [A-Z][0-9A-Z_]*
+
+
+#NonTerminals
+<lista_comandos>
+<chama_fun>
+<comando>
+<lista_var>
+<condicional>
+<loop>
+<lista_condicoes>
+<condicao>
+<comp>
+<logi>
+<funcao>
+<declara>
+<params>
+<param>
+<calculos>
+<prior4>
+<prior3>
+<prior2>
+<prior1>
+<extratipo>
+<atribvar>
+<atribnum>
+<atribschar>
+<variavel>
+<tipo_fun>
+<tipo_var>
+<valor>
+<bool>
+<comment>
+#Grammar
+<lista_comandos> ::= <lista_comandos> <comando> | <comando> <lista_comandos> | <comando> | <comment>;
+<comando> ::= <extratipo> <declara> endl | <declara> endl | <atribvar> endl | <condicional> | <chama_fun> endl | <funcao>;
+<chama_fun> ::= funid abrepar <lista_var> fechapar | funid abrepar fechapar;
+<lista_var> ::= <lista_var> virg <lista_var> | varid | <valor> | litchar | litstr;
+<condicional> ::= if abrepar <lista_condicoes> fechapar abrecha <lista_comandos> fechacha | if abrepar <lista_condicoes> fechapar <comando>;
+<loop> ::= while abrepar <lista_condicoes> fechapar abrecha <lista_comandos> fechacha | do abrecha <lista_comandos> fechacha;
+<lista_condicoes> ::= <lista_condicoes> <logi> <condicao> | <condicao> | not abrepar <condicao> fechapar while abrepar <lista_condicoes> fechapar;
+<condicao> ::= <prior4> <comp> <prior4> | varid | not varid | <bool> | not <bool>;
+<comp> ::= maiorq | menorq | maiorig | menorig | iguala | difere;
+<logi> ::= andlog | orlog;
+<funcao> ::= <tipo_fun> funid <params> | <tipo_fun> funid <params> abrecha <lista_comandos> fechacha | <tipo_fun> funid <params> abrecha <lista_comandos> return fechacha;
+<declara> ::= <atribschar> | <atribnum> | <atribnum> <calculos> | <tipo_var> varid atrib varid | <tipo_var> varid atrib varid <calculos>;
+<params> ::= abrepar fechapar | abrepar <param> fechapar;
+<param> ::= <param> virg <param> | <variavel>;
+<calculos> ::= soma <prior4> | sub <prior4> | mult <prior4> | div <prior4> | mod <prior4>;
+<prior4> ::= <prior4> soma <prior3> | <prior4> sub <prior3> | <prior3>;
+<prior3> ::= <prior3> mult <prior2> | <prior3> div <prior2> | <prior2>;
+<prior2> ::= <prior2> mod <prior1> | <prior1>;
+<prior1> ::= abrepar <prior4> fechapar | <valor> | varid;
+<extratipo> ::= long | short | unsigned | const;
+<atribvar> ::= varid atrib <prior4> | varid atrib litstr | varid atrib litchar;
+<atribnum> ::= int varid atrib litint | double varid atrib litdouble | float varid atrib litfloat;
+<atribschar> ::= char varid atrib litchar | string varid atrib litstr | boolean varid atrib <bool>;
+<variavel> ::= int varid | char varid | string varid | double varid | float varid | boolean varid;
+<tipo_fun> ::= void | int | char | string | double | float | boolean;
+<tipo_var> ::= int | char | string | double | float | boolean;
+<valor> ::= litint | litdouble | litfloat | litbin | lithex;
+<bool> ::= true | false;
+<comment> ::= coment | coment_multi;
