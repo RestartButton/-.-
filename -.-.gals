@@ -1,0 +1,193 @@
+#Options
+GenerateScanner = true
+GenerateParser = true
+Language = C++
+ScannerName = Lexico
+ParserName = Sintatico
+SemanticName = Semantico
+ScannerCaseSensitive = true
+ScannerTable = Full
+Input = Stream
+Parser = SLR
+#RegularDefinitions
+
+
+
+#Tokens
+: [\n\s\r\t]
+
+comentario: "##:"[^\n\r]*
+comentario_multiplo: "#:"([^":"]|":"+[^":""#"])*":"+"#"
+
+
+if: ".-"
+else: ".--."
+while: "--.-."
+do: "-."
+return: "-.-.--"
+for: "-.-"
+
+
+soma: "+"
+mult: "*"
+sub: "-"
+div: "/"
+atrib: "="
+mod: "%"
+
+
+maior_q: ">"
+menor_q:"<"
+maior_ig:">="
+menor_ig:"<="
+igual_a:"=="
+difere:"!="
+
+
+and_log: "&&"
+or_log: "||"
+not: "!"
+
+
+shfl:"<<"
+shfr:">>"
+bwand:"&"
+bwor:"|"
+bwinv:"~"
+xor:"^"
+
+pontpont: ".."
+endl: "?"
+pont: "."
+virg: ","
+
+abre_par: ")"
+fecha_par: "("
+abre_col: "]"
+fecha_col: "["
+abre_cha: "}"
+fecha_cha: "{"
+
+
+void: "-..-"
+long: "-.--"
+short: "--.--"
+unsigned: ".--.--.-"
+const: "-.---"
+
+int: ".--"
+char: "--.-"
+string: "---.--"
+double: "-..--."
+float: "--..-"
+boolean: "-..-..-"
+
+
+true: "--.."
+false: "-.--."
+
+lit_int: [0-9]+
+lit_char: "'"[^'\t\n\r]"'"
+lit_str: \"[^\"]*\"
+lit_double: [0-9]+"."[0-9]+
+lit_float: [0-9]+"."[0-9]+[Ff]
+
+lit_bin: "0b"[0-1]+
+lit_hex: "0x"[0-9A-Fa-f]+
+
+
+
+func_id: [a-z][0-9A-Z_]*
+var_id: [A-Z][0-9A-Z_]*
+
+
+#NonTerminals
+<programa>
+<lista_comando>
+<comando>
+
+<declaracao>
+<declaracao_var>
+<declaracao_vet>
+<lista_exp>
+<declaracao_func>
+<atrib>
+<condicional>
+<loop>
+<condicao>
+<for>
+<condicao_for>
+<inicio_for>
+<fim_for>
+<incremento>
+
+<exp>
+<exp1>
+<exp2>
+<exp3>
+<exp4>
+<exp5>
+<exp6>
+<exp7>
+<exp8>
+<exp9>
+<exp10>
+<literal>
+
+<op_rel>
+<op_neg>
+<op_bitwise>
+<op_arit_baixa>
+<op_arit_alta>
+<op_arit_mais_alta>
+
+<retorno>
+<tipo>
+<extra_tipo>
+<comentario>
+#Grammar
+<programa> ::= <lista_comando> <comando> | <comando>;
+<lista_comando> ::= <lista_comando> <comando> | <comando>;
+<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for>;
+
+<comentario> ::= comentario | comentario_multiplo;
+
+<declaracao> ::= <declaracao_var> | <declaracao_vet> | <declaracao_func>;
+<declaracao_var> ::= <extra_tipo> <tipo> var_id atrib <atrib> endl | <extra_tipo> <tipo> var_id endl | <tipo> var_id endl | <tipo> var_id atrib <atrib> endl;
+<declaracao_vet> ::= <tipo> var_id abre_col <exp> fecha_col endl | <tipo> var_id abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha endl;
+<lista_exp> ::= <lista_exp> virg <exp> | <exp>;
+<declaracao_func> ::= <retorno> func_id abre_par fecha_par endl | <retorno> func_id abre_par fecha_par endl;
+
+<atrib> ::= <exp> | lit_char | lit_str | true | false;
+
+<condicional> ::= if abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha | if abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha else abre_cha <lista_comando> fecha_cha;
+<loop> ::= while abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha | do abre_cha <lista_comando> fecha_cha while abre_par <condicao> fecha_par;
+<for> ::= for abre_par <condicao_for> fecha_par abre_cha <lista_comando> fecha_cha;
+<condicao_for> ::= <inicio_for> endl <fim_for> endl <incremento>;
+<inicio_for> ::= <declaracao_var>;
+<fim_for> ::= <exp>;
+<incremento> ::= var_id soma soma | var_id sub sub | <declaracao_var>;
+<condicao> ::= <exp> | true | false;
+
+<exp>  ::= <exp> or_log <exp1> | <exp1>;
+<exp1> ::= <exp1> and_log <exp2> | <exp2>;
+<exp2> ::= <exp2> bwor <exp3> | <exp3>;
+<exp3> ::= <exp3> xor <exp4> | <exp4>;
+<exp4> ::= <exp4> bwand <exp5> | <exp5>;
+<exp5> ::= <exp5> <op_rel> <exp6> | <exp6>;
+<exp6> ::= <exp6> <op_bitwise> <exp7> | <exp7>;
+<exp7> ::= <exp7> <op_arit_baixa> <exp8> | <exp8>;
+<exp8> ::= <exp8> <op_arit_alta> <exp9> | <exp9> ;
+<exp9> ::= <op_neg> <exp10> | <exp10>;
+<exp10> ::= <literal> | var_id | abre_par <exp> fecha_par;
+<literal> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex;
+
+<op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | atrib | difere; 
+<op_neg> ::= sub | bwinv | not;
+<op_bitwise> ::= shfl | shfr;
+<op_arit_baixa> ::= soma | sub;
+<op_arit_alta> ::= mult | div | mod;
+
+<retorno> ::= void | <tipo>;
+<tipo> ::= int | char | string | double | float | boolean;
+<extra_tipo> ::= long | short | unsigned | const;
