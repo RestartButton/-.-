@@ -15,7 +15,7 @@ public:
 
     void setInput(const std::string &input);
     void setPosition(unsigned pos) { position = pos; }
-    Token *nextToken();
+    Token *nextToken() throw (LexicalError);
 
 private:
     unsigned position;

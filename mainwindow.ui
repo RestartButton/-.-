@@ -13,7 +13,13 @@
   <property name="windowTitle">
    <string>-.-</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="cursor">
+    <cursorShape>WhatsThisCursor</cursorShape>
+   </property>
    <widget class="QTextEdit" name="Codigo">
     <property name="geometry">
      <rect>
@@ -22,6 +28,9 @@
       <width>961</width>
       <height>431</height>
      </rect>
+    </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>WhatsThisCursor</cursorShape>
     </property>
    </widget>
    <widget class="QTextEdit" name="Terminal">
@@ -32,6 +41,9 @@
       <width>851</width>
       <height>121</height>
      </rect>
+    </property>
+    <property name="cursor" stdset="0">
+     <cursorShape>WhatsThisCursor</cursorShape>
     </property>
     <property name="acceptDrops">
      <bool>false</bool>
@@ -87,6 +99,9 @@
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>0</x>
@@ -97,6 +112,9 @@
    </property>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
@@ -104,7 +122,11 @@
     <bool>false</bool>
    </attribute>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

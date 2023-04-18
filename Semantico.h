@@ -7,7 +7,7 @@
 class Semantico
 {
 public:
-    void executeAction(int action, const Token *token);
+    void executeAction(int action, const Token *token) throw (SemanticError );
 };
 
 #endif

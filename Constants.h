@@ -66,10 +66,12 @@ enum TokenId
     t_lit_bin = 60,
     t_lit_hex = 61,
     t_func_id = 62,
-    t_var_id = 63
+    t_var_id = 63,
+    t_leia = 64,
+    t_escreva = 65
 };
 
-const int STATES_COUNT = 88;
+const int STATES_COUNT = 93;
 
 extern int SCANNER_TABLE[STATES_COUNT][256];
 
@@ -77,7 +79,7 @@ extern int TOKEN_STATE[STATES_COUNT];
 
 extern const char *SCANNER_ERROR[STATES_COUNT];
 
-const int FIRST_SEMANTIC_ACTION = 104;
+const int FIRST_SEMANTIC_ACTION = 111;
 
 const int SHIFT  = 0;
 const int REDUCE = 1;
@@ -86,10 +88,10 @@ const int ACCEPT = 3;
 const int GO_TO  = 4;
 const int ERROR  = 5;
 
-extern const int PARSER_TABLE[172][104][2];
+extern const int PARSER_TABLE[205][111][2];
 
-extern const int PRODUCTIONS[101][2];
+extern const int PRODUCTIONS[115][2];
 
-extern const char *PARSER_ERROR[172];
+extern const char *PARSER_ERROR[205];
 
 #endif

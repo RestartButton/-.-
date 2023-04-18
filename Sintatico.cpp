@@ -1,6 +1,6 @@
 #include "Sintatico.h"
 
-void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser)
+void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser) throw (AnalysisError)
 {
     this->scanner = scanner;
     this->semanticAnalyser = semanticAnalyser;
@@ -23,7 +23,7 @@ void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser)
         ;
 }
 
-bool Sintatico::step()
+bool Sintatico::step() throw (AnalysisError)
 {
     if (currentToken == 0) //Fim de Sentensa
     {

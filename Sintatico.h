@@ -20,7 +20,7 @@ public:
         if (currentToken != 0)  delete currentToken;
     }
 
-    void parse(Lexico *scanner, Semantico *semanticAnalyser);
+    void parse(Lexico *scanner, Semantico *semanticAnalyser) throw (AnalysisError);
 
 private:
     std::stack<int> stack;
@@ -29,7 +29,7 @@ private:
     Lexico *scanner;
     Semantico *semanticAnalyser;
 
-    bool step();
+    bool step() throw (AnalysisError);
 };
 
 #endif
