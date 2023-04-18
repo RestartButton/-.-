@@ -1,4 +1,4 @@
-#include "Constants.h"
+#include "lib/Constants.h"
 
 int SCANNER_TABLE[STATES_COUNT][256] = 
 {
@@ -184,7 +184,7 @@ int TOKEN_STATE[STATES_COUNT] = {-1,  0, 24, -1, -1, 15, 27, -1, 36, 35, 11, 10,
 
 const char *SCANNER_ERROR[STATES_COUNT] =
 {
-        "Caractere não esperado",
+        "Caractere nao esperado",
         "",
         "",
         "Erro identificando lit_str",

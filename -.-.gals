@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Full
-Input = Stream
+Input = String
 Parser = SLR
 #RegularDefinitions
 
@@ -49,6 +49,7 @@ or_log: "||"
 
 
 not: "!"
+menos: "-"
 
 
 shfl:"<<"
@@ -110,6 +111,7 @@ var_id: [A-Z][0-9A-Z_]*
 <lista_comando>
 <comando>
 
+<expressao>
 <declaracao>
 <declaracao_var>
 <declaracao_vet>
@@ -152,15 +154,16 @@ var_id: [A-Z][0-9A-Z_]*
 #Grammar
 <programa> ::= <lista_comando> <comando> | <comando>;
 <lista_comando> ::= <lista_comando> <comando> | <comando>;
-<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for>;
+<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao>;
 
 <comentario> ::= comentario | comentario_multiplo;
 
-<declaracao> ::= <declaracao_var> | <declaracao_vet> | <declaracao_func>;
-<declaracao_var> ::= <extra_tipo> <tipo> var_id atrib <atrib> endl | <extra_tipo> <tipo> var_id endl | <tipo> var_id endl | <tipo> var_id atrib <atrib> endl;
-<declaracao_vet> ::= <tipo> var_id abre_col <exp> fecha_col endl | <tipo> var_id abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha endl;
+<expressao> ::= <exp> endl;
+<declaracao> ::= <declaracao_var> endl | <declaracao_vet> endl | <declaracao_func>;
+<declaracao_var> ::= <extra_tipo> <tipo> var_id atrib <atrib> | <extra_tipo> <tipo> var_id | <tipo> var_id | <tipo> var_id atrib <atrib>;
+<declaracao_vet> ::= <tipo> var_id abre_col <exp> fecha_col | <tipo> var_id abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha;
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;
-<declaracao_func> ::= <retorno> func_id abre_par fecha_par endl | <retorno> func_id abre_par fecha_par endl;
+<declaracao_func> ::= <retorno> func_id abre_par fecha_par endl| <retorno> func_id abre_par fecha_par abre_cha <lista_comando> fecha_cha;
 
 <atrib> ::= <exp> | lit_char | lit_str | true | false;
 
@@ -187,7 +190,7 @@ var_id: [A-Z][0-9A-Z_]*
 <literal> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex;
 
 <op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | atrib | difere; 
-<op_neg> ::= sub | bwinv | not;
+<op_neg> ::= menos | bwinv | not;
 <op_bitwise> ::= shfl | shfr;
 <op_arit_baixa> ::= soma | sub;
 <op_arit_alta> ::= mult | div | mod;

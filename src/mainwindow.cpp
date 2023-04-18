@@ -1,5 +1,8 @@
-#include "mainwindow.h"
+#include "lib/mainwindow.h"
 #include "ui_mainwindow.h"
+#include "lib/Lexico.h"
+#include "lib/Sintatico.h"
+#include "lib/Semantico.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
@@ -67,5 +70,15 @@ void MainWindow::on_Salvar_clicked()
 
 void MainWindow::on_Correr_clicked()
 {
+    try{
+        Lexico lexico = Lexico(ui->Codigo->toPlainText());
+
+        Sintatico sintatico = Sintatico();
+        Semantico semantico = Semantico();
+        sintatico.parse(&lexico, &semantico);
+    } catch ( LexicalError | SyntaticError | SemanticError e) {
+        ui->Codigo->clear();
+        ui->Codigo->setPlainText("Comando nao identificado! \n" + e.getMessage());
+    }
 
 }

@@ -11,11 +11,11 @@ class Lexico
 {
 public:
     Lexico(std::istream &input) { setInput(input); }
-    Lexico() : input(""), position(0) { }
+    Lexico() : position(0), input("") { }
 
     void setInput(std::istream &input);
     void setPosition(unsigned pos) { position = pos; }
-    Token *nextToken() throw (LexicalError);
+    Token *nextToken();
 
 private:
     unsigned position;
