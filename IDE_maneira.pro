@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = IDE_maneira
 TEMPLATE = app
@@ -24,10 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        src/*.cpp
+        *.cpp
 
 HEADERS += \
-        src/lib/*.h
+        *.h
 
 FORMS += \
         mainwindow.ui

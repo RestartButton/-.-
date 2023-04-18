@@ -1,12 +1,8 @@
-#include "lib/Lexico.h"
+#include "Lexico.h"
 
-void Lexico::setInput(std::istream &input)
+void Lexico::setInput(const std::string &input)
 {
-    std::istreambuf_iterator<char> in(input);
-    std::istreambuf_iterator<char> eof;
-
-    this->input.assign(in, eof);
-
+    this->input = input;
     setPosition(0);
 }
 
@@ -39,7 +35,7 @@ Token *Lexico::nextToken()
             }
         }
     }
-    if (endState < 0 || (endState != state && tokenForState(oldState) == static_cast<TokenId>(-2)))
+    if (endState < 0 || (endState != state && tokenForState(oldState) == -2))
         throw LexicalError(SCANNER_ERROR[oldState], start);
 
     position = end;

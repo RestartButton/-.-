@@ -1,11 +1,12 @@
-#include "lib/mainwindow.h"
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "lib/Lexico.h"
-#include "lib/Sintatico.h"
-#include "lib/Semantico.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
+
+#include "Lexico.h"
+#include "Sintatico.h"
+#include "Semantico.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -71,14 +72,14 @@ void MainWindow::on_Salvar_clicked()
 void MainWindow::on_Correr_clicked()
 {
     try{
-        Lexico lexico = Lexico(ui->Codigo->toPlainText());
+        Lexico lexico = Lexico(ui->Codigo->toPlainText().toStdString());
 
         Sintatico sintatico = Sintatico();
         Semantico semantico = Semantico();
         sintatico.parse(&lexico, &semantico);
-    } catch ( LexicalError | SyntaticError | SemanticError e) {
-        ui->Codigo->clear();
-        ui->Codigo->setPlainText("Comando nao identificado! \n" + e.getMessage());
+        ui->Terminal->setPlainText("Comando aceito!\n");
+    } catch ( AnalysisError e) {
+        ui->Terminal->clear();
+        ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
     }
-
 }

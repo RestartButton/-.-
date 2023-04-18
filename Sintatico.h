@@ -12,7 +12,7 @@
 class Sintatico
 {
 public:
-    Sintatico() : currentToken(0), previousToken(0) { }
+    Sintatico() : previousToken(0), currentToken(0) { }
 
     ~Sintatico()
     {

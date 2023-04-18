@@ -1,4 +1,4 @@
-#include "lib/Sintatico.h"
+#include "Sintatico.h"
 
 void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser)
 {

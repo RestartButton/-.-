@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>-.-</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTextEdit" name="Codigo">
@@ -92,15 +92,9 @@
      <x>0</x>
      <y>0</y>
      <width>983</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>-.-</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

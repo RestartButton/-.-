@@ -1,5 +1,5 @@
-#include "lib/Semantico.h"
-#include "lib/Constants.h"
+#include "Semantico.h"
+#include "Constants.h"
 
 #include <iostream>
 

@@ -10,10 +10,10 @@
 class Lexico
 {
 public:
-    Lexico(std::istream &input) { setInput(input); }
-    Lexico() : position(0), input("") { }
+    Lexico(const std::string &input) { setInput(input); }
+    Lexico() : input(""), position(0) { }
 
-    void setInput(std::istream &input);
+    void setInput(const std::string &input);
     void setPosition(unsigned pos) { position = pos; }
     Token *nextToken();
 
