@@ -6,7 +6,7 @@ void Lexico::setInput(const std::string &input)
     setPosition(0);
 }
 
-Token *Lexico::nextToken() throw (LexicalError)
+Token *Lexico::nextToken()
 {
     if ( ! hasInput() )
         return 0;

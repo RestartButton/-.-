@@ -20,7 +20,12 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
+/*
+void MainWindow::console(const std::string text){
+    QString qtext = QString::fromStdString(text);
+    ui->Terminal->setPlainText(text);
+}
+*/
 void MainWindow::on_Abrir_clicked()
 {
     QString fileContent;

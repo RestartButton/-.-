@@ -194,7 +194,7 @@ int TOKEN_STATE[STATES_COUNT] = {-1,  0, 24, -1, -1, 15, 28, -1, 37, 36, 11, 10,
 
 const char *SCANNER_ERROR[STATES_COUNT] =
 {
-        "Caractere não esperado",
+        "Caractere nao esperado",
         "",
         "",
         "Erro identificando lit_str",

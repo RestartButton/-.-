@@ -12,7 +12,7 @@
 class Sintatico
 {
 public:
-    Sintatico() : previousToken(0), currentToken(0) { }
+    Sintatico() : currentToken(0), previousToken(0) { }
 
     ~Sintatico()
     {
@@ -20,7 +20,7 @@ public:
         if (currentToken != 0)  delete currentToken;
     }
 
-    void parse(Lexico *scanner, Semantico *semanticAnalyser) throw (AnalysisError);
+    void parse(Lexico *scanner, Semantico *semanticAnalyser);
 
 private:
     std::stack<int> stack;
@@ -29,7 +29,7 @@ private:
     Lexico *scanner;
     Semantico *semanticAnalyser;
 
-    bool step() throw (AnalysisError);
+    bool step();
 };
 
 #endif

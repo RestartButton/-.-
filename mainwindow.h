@@ -14,6 +14,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static void console(const std::string text);
 
 private slots:
     void on_Abrir_clicked();

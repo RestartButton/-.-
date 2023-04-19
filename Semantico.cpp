@@ -3,9 +3,9 @@
 
 #include <iostream>
 
-void Semantico::executeAction(int action, const Token *token) throw (SemanticError )
+void Semantico::executeAction(int action, const Token *token)
 {
-    std::cout << "Ação: " << action << ", Token: "  << token->getId() 
+    std::cout << "Acao: " << action << ", Token: "  << token->getId() 
               << ", Lexema: " << token->getLexeme() << std::endl;
 }
 
