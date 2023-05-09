@@ -28,5 +28,7 @@ bool isVet( list<Simbolo> tabela, string fun, string escopo );
 bool isMatrix( list<Simbolo> tabela, string var, string escopo );
 bool isDec( list<Simbolo> tabela, string var, string escopo );
 
-string getTipo();
-int getParamPos();
+string getTipo( list<Simbolo> tabela, string var, string escopo );
+int getParamPos( list<Simbolo> tabela, string var, string escopo );
+
+Simbolo* getSimbolo ( list<Simbolo> tabela, string var, string escopo );
