@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Full
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 
@@ -166,21 +166,21 @@ escreva: ".---.-."
 <comentario> ::= comentario | comentario_multiplo;
 <console_cmd> ::= leia abre_par fecha_par endl | escreva abre_par fecha_par endl | leia abre_par <atrib> fecha_par endl | escreva abre_par <atrib> fecha_par endl;
 
-<expressao> ::= <exp> endl;
-<declaracao> ::= <declaracao_var> endl | <declaracao_vet> endl | <declaracao_func>;
-<declaracao_var> ::= <tipos> var_id | <tipos> var_id atrib <atrib> | <tipos> var_id virg <lista_var>;
-<lista_var> ::= <lista_var> virg var_id | var_id;
+<expressao> ::= <exp> endl #99;
+<declaracao> ::= <declaracao_var> endl #99 | <declaracao_vet> endl #99 | <declaracao_func>;
+<declaracao_var> ::= <tipos> #3 var_id #1 | <tipos> #3 var_id #1 atrib <atrib> | <tipos> #3 var_id #1 virg <lista_var>;
+<lista_var> ::= <lista_var> virg var_id #1 | var_id #1;
 <declaracao_vet> ::= <tipos> var_id abre_col <exp> fecha_col | <tipos> var_id abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha;
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;
-<declaracao_func> ::= <retorno> func_id abre_par <parametros> fecha_par endl | <retorno> func_id abre_par <parametros> fecha_par abre_cha <lista_comando> fecha_cha | <retorno> func_id abre_par fecha_par endl | <retorno> func_id abre_par fecha_par abre_cha <lista_comando> fecha_cha;
+<declaracao_func> ::= <retorno> #6 func_id #2 abre_par <parametros> fecha_par endl #99 | <retorno> #6 func_id #2 abre_par <parametros> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | <retorno> #6 func_id #2 abre_par fecha_par endl #99 | <retorno> #6 func_id #2 abre_par fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
 <parametros> ::= <parametros> virg <tipos> var_id| <tipos> var_id;
 <func_retorno> ::= return <exp> endl;
 
 <atrib> ::= <exp> | lit_char | lit_str | true | false;
 
-<condicional> ::= if abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha | if abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha else abre_cha <lista_comando> fecha_cha;
-<loop> ::= while abre_par <condicao> fecha_par abre_cha <lista_comando> fecha_cha | do abre_cha <lista_comando> fecha_cha while abre_par <condicao> fecha_par;
-<for> ::= for abre_par <condicao_for> fecha_par abre_cha <lista_comando> fecha_cha;
+<condicional> ::= if abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | if abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 else abre_cha #4 <lista_comando> fecha_cha #5;
+<loop> ::= while abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | do abre_cha #4 <lista_comando> fecha_cha #5 while abre_par <condicao> fecha_par;
+<for> ::= for abre_par <condicao_for> fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
 <condicao_for> ::= <inicio_for> endl <fim_for> endl <incremento>;
 <inicio_for> ::= <declaracao_var>;
 <fim_for> ::= <exp>;
