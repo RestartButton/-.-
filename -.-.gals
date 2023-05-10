@@ -61,8 +61,8 @@ xor:"^"
 
 pontpont: ".."
 endl: "?"
-pont: "."
-virg: ","
+pont: "°"
+virg: "'"
 
 
 abre_par: ")"
@@ -92,7 +92,7 @@ true: "--.."
 false: "-.--."
 
 lit_int: [0-9]+
-lit_char: "'"[^'\t\n\r]"'"
+lit_char: ","[^'\t\n\r]","
 lit_str: \"[^\"]*\"
 lit_double: [0-9]+"."[0-9]+
 lit_float: [0-9]+"."[0-9]+[Ff]
@@ -122,7 +122,12 @@ escreva: ".---.-."
 <declaracao_func>
 <parametros>
 <func_retorno>
+<chamada_func>
+<chamada_vet>
+
+<chamada_parametros>
 <atrib>
+
 <condicional>
 <loop>
 <condicao>
@@ -131,6 +136,8 @@ escreva: ".---.-."
 <inicio_for>
 <fim_for>
 <incremento>
+
+<console_cmd>
 
 <exp>
 <exp1>
@@ -157,25 +164,27 @@ escreva: ".---.-."
 <tipo>
 <extra_tipo>
 <comentario>
-<console_cmd>
 #Grammar
 <programa> ::= <lista_comando> <comando> | <comando>;
 <lista_comando> ::= <lista_comando> <comando> | <comando>;
-<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd>;
+<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func>;
 
 <comentario> ::= comentario | comentario_multiplo;
-<console_cmd> ::= leia abre_par fecha_par endl | escreva abre_par fecha_par endl | leia abre_par <atrib> fecha_par endl | escreva abre_par <atrib> fecha_par endl;
+<console_cmd> ::= leia abre_par var_id fecha_par endl | escreva abre_par <atrib> fecha_par endl;
 
 <expressao> ::= <exp> endl #99;
 <declaracao> ::= <declaracao_var> endl #99 | <declaracao_vet> endl #99 | <declaracao_func>;
 <declaracao_var> ::= <tipos> #3 var_id #1 | <tipos> #3 var_id #1 atrib <atrib> | <tipos> #3 var_id #1 virg <lista_var>;
 <lista_var> ::= <lista_var> virg var_id #1 | var_id #1;
-<declaracao_vet> ::= <tipos> var_id abre_col <exp> fecha_col | <tipos> var_id abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha;
+<declaracao_vet> ::= <tipos> #3 var_id #8 abre_col <exp> fecha_col | <tipos> #3 var_id #8 abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha #9;
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;
 <declaracao_func> ::= <retorno> #6 func_id #2 abre_par <parametros> fecha_par endl #99 | <retorno> #6 func_id #2 abre_par <parametros> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | <retorno> #6 func_id #2 abre_par fecha_par endl #99 | <retorno> #6 func_id #2 abre_par fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
-<parametros> ::= <parametros> virg <tipos> var_id| <tipos> var_id;
+<parametros> ::= <parametros> virg <tipos> #3 var_id #7| <tipos> #3 var_id #7;
 <func_retorno> ::= return <exp> endl;
+<chamada_func> ::= func_id abre_par <chamada_parametros> fecha_par endl;
+<chamada_vet> ::= var_id abre_col <exp> fecha_col;
 
+<chamada_parametros> ::= <chamada_parametros> virg var_id | var_id | <chamada_parametros> virg <chamada_vet> | <chamada_vet>  ;
 <atrib> ::= <exp> | lit_char | lit_str | true | false;
 
 <condicional> ::= if abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | if abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 else abre_cha #4 <lista_comando> fecha_cha #5;
@@ -197,7 +206,7 @@ escreva: ".---.-."
 <exp7> ::= <exp7> <op_arit_baixa> <exp8> | <exp8>;
 <exp8> ::= <exp8> <op_arit_alta> <exp9> | <exp9> ;
 <exp9> ::= <op_neg> <exp10> | <exp10>;
-<exp10> ::= <literal> | var_id | abre_par <exp> fecha_par;
+<exp10> ::= <literal> | var_id #10 | <chamada_vet> | abre_par <exp> fecha_par;
 <literal> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex;
 
 <op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | atrib | difere; 

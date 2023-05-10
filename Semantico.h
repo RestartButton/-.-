@@ -20,6 +20,7 @@ private:
     string tipo_atual;
     string retorno_atual;
     string lescopo_aberto;
+    int param_count;
 };
 
 #endif
