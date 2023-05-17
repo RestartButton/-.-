@@ -174,7 +174,7 @@ escreva: ".---.-."
 
 <expressao> ::= <exp> endl #99;
 <declaracao> ::= <declaracao_var> endl #99 | <declaracao_vet> endl #99 | <declaracao_func>;
-<declaracao_var> ::= <tipos> #3 var_id #1 | <tipos> #3 var_id #1 atrib <atrib> | <tipos> #3 var_id #1 virg <lista_var>;
+<declaracao_var> ::= <tipos> #3 var_id #1 | <tipos> #3 var_id #1 atrib <atrib> #9 | <tipos> #3 var_id #1 virg <lista_var>;
 <lista_var> ::= <lista_var> virg var_id #1 | var_id #1;
 <declaracao_vet> ::= <tipos> #3 var_id #8 abre_col <exp> fecha_col | <tipos> #3 var_id #8 abre_col <exp> fecha_col atrib abre_cha <lista_exp> fecha_cha #9;
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;

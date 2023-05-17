@@ -1,6 +1,6 @@
 #include "Lexico.h"
 
-void Lexico::setInput(const std::string input)
+void Lexico::setInput(const char *input)
 {
     this->input = input;
     setPosition(0);

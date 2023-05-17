@@ -1,79 +1,88 @@
 #include "Sintatico.h"
 
-void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser)
+void Sintatico::parse(Lexico *scanner, Semantico *semanticAnalyser) throw (AnalysisError)
 {
-    this->scanner = scanner;
-    this->semanticAnalyser = semanticAnalyser;
+    try{
+        this->scanner = scanner;
+        this->semanticAnalyser = semanticAnalyser;
 
-    //Limpa a pilha
-    while (! stack.empty())
-        stack.pop();
+        //Limpa a pilha
+        while (! stack.empty())
+            stack.pop();
 
-    stack.push(0);
+        stack.push(0);
 
-    if (previousToken != 0 && previousToken != currentToken)
-        delete previousToken;
-    previousToken = 0;
+        if (previousToken != 0 && previousToken != currentToken)
+            delete previousToken;
+        previousToken = 0;
 
-    if (currentToken != 0)
-        delete currentToken;
-    currentToken = scanner->nextToken();
+        if (currentToken != 0)
+            delete currentToken;
+        currentToken = scanner->nextToken();
 
-    while ( ! step() )
-        ;
+        while ( ! step() )
+            ;
+    } catch (AnalysisError e) {
+        throw new AnalysisError(e.getMessage());
+    }
 }
 
-bool Sintatico::step()
+bool Sintatico::step() throw (AnalysisError)
 {
-    if (currentToken == 0) //Fim de Sentensa
-    {
-        int pos = 0;
-        if (previousToken != 0)
-            pos = previousToken->getPosition() + previousToken->getLexeme().size();
-
-        currentToken = new Token(DOLLAR, "$", pos);
-    }
-
-    int token = currentToken->getId();
-    int state = stack.top();
-
-    const int* cmd = PARSER_TABLE[state][token-1];
-
-    switch (cmd[0])
-    {
-        case SHIFT:
+    try{
+        if (currentToken == 0) //Fim de Sentensa
         {
-            stack.push(cmd[1]);
+            int pos = 0;
             if (previousToken != 0)
-                delete previousToken;
-            previousToken = currentToken;
-            currentToken = scanner->nextToken();
-            return false;
+                pos = previousToken->getPosition() + previousToken->getLexeme().size();
+
+            currentToken = new Token(DOLLAR, "$", pos);
         }
-        case REDUCE:
+
+        int token = currentToken->getId();
+        int state = stack.top();
+
+        const int* cmd = PARSER_TABLE[state][token-1];
+
+        switch (cmd[0])
         {
-            const int* prod = PRODUCTIONS[cmd[1]];
+            case SHIFT:
+            {
+                stack.push(cmd[1]);
+                if (previousToken != 0)
+                    delete previousToken;
+                previousToken = currentToken;
+                currentToken = scanner->nextToken();
+                return false;
+            }
+            case REDUCE:
+            {
+                const int* prod = PRODUCTIONS[cmd[1]];
 
-            for (int i=0; i<prod[1]; i++)
-                stack.pop();
+                for (int i=0; i<prod[1]; i++)
+                    stack.pop();
 
-            int oldState = stack.top();
-            stack.push(PARSER_TABLE[oldState][prod[0]-1][1]);
-            return false;
+                int oldState = stack.top();
+                stack.push(PARSER_TABLE[oldState][prod[0]-1][1]);
+                return false;
+            }
+            case ACTION:
+            {
+                int action = FIRST_SEMANTIC_ACTION + cmd[1] - 1;
+                stack.push(PARSER_TABLE[state][action][1]);
+                semanticAnalyser->executeAction(cmd[1], previousToken);
+                return false;
+            }
+            case ACCEPT:
+                return true;
+
+            case ERROR:
+                throw SyntaticError(PARSER_ERROR[state], currentToken->getPosition());
         }
-        case ACTION:
-        {
-            int action = FIRST_SEMANTIC_ACTION + cmd[1] - 1;
-            stack.push(PARSER_TABLE[state][action][1]);
-            semanticAnalyser->executeAction(cmd[1], previousToken);
-            return false;
-        }
-        case ACCEPT:
-            return true;
-
-        case ERROR:
-            throw SyntaticError(PARSER_ERROR[state], currentToken->getPosition());
+    } catch (AnalysisError e) {
+        throw new AnalysisError(e.getMessage());
     }
+
     return false;
 }
 

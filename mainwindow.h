@@ -23,6 +23,8 @@ private slots:
 
     void on_Correr_clicked();
 
+    void on_tableView_activated(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
 };

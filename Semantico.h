@@ -6,20 +6,24 @@
 #include <list>
 #include <stack>
 #include "Tabela.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 class Semantico
 {
 public:
     Semantico();
-    void executeAction(int action, const Token *token);
+    void executeAction(int action, const Token *token) throw (SemanticError);
+    list<Simbolo>* tabela_simbolos;
+    stack<string>* lista_warnings;
 private:
     stack<string>* lista_escopos;
-    list<Simbolo>* tabela_simbolos;
     Simbolo* simbolo_atual;
     Simbolo* simbolo_chamado;
     string tipo_atual;
     string retorno_atual;
     string lescopo_aberto;
+
     int param_count;
 };
 

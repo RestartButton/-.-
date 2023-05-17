@@ -73,7 +73,7 @@ void MainWindow::on_Salvar_clicked()
         file.close();
 
 }
-
+#include <QDebug>
 void MainWindow::on_Correr_clicked()
 {
     try{
@@ -82,9 +82,45 @@ void MainWindow::on_Correr_clicked()
         Sintatico sintatico = Sintatico();
         Semantico semantico = Semantico();
         sintatico.parse(&lexico, &semantico);
-        ui->Terminal->setPlainText("Comando aceito!\n");
-    } catch ( AnalysisError e) {
+
+        std::string output = "";
+
+        while(!semantico.lista_warnings->empty()) {
+            output += semantico.lista_warnings->top() + "\n";
+            semantico.lista_warnings->pop();
+        }
+        auto tabela = semantico.tabela_simbolos;
+        for( list<Simbolo>::iterator it = tabela->begin(); it != tabela->end(); it++) {
+            if(!it->usada) {
+                output += "Variavel declarada mas nao utilizada: " + it->nome + "\n";
+            }
+            std::cout << it->nome << " "  << it->escopo << " "  << it->func << " "  <<  it->vet << " "  << it->usada << " " << it->inic << " \n";
+            qDebug() << QString("Nome: %1 | Escopo: %2 | Func: %3 | Vet: %4 | Usada: %5 | Inicializada: %6 | Tipo: %7")
+                        .arg(QString::fromStdString(it->nome))
+                        .arg(QString::fromStdString(it->escopo))
+                        .arg(it->func)
+                        .arg(it->vet)
+                        .arg(it->usada)
+                        .arg(it->inic)
+                        .arg(QString::fromStdString(it->tipo));
+        }
+
+        output += "Comando aceito!\n";
+
+        ui->Terminal->setPlainText(QString(output.c_str()));
+    } catch ( LexicalError e) {
+        ui->Terminal->clear();
+        ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
+    } catch ( SyntaticError e) {
+        ui->Terminal->clear();
+        ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
+    } catch ( SemanticError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
     }
+}
+
+void MainWindow::on_tableView_activated(const QModelIndex &index)
+{
+
 }

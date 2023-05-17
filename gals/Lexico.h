@@ -9,9 +9,9 @@
 class Lexico
 {
 public:
-    Lexico(const std::string input = "") { setInput(input); }
+    Lexico(const char *input = "") { setInput(input); }
 
-    void setInput(const std::string input);
+    void setInput(const char *input);
     void setPosition(unsigned pos) { position = pos; }
     Token *nextToken() throw (LexicalError);
 

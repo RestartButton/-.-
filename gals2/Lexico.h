@@ -5,15 +5,17 @@
 #include "LexicalError.h"
 
 #include <string>
+#include <iostream>
 
 class Lexico
 {
 public:
-    Lexico(const std::string input = "") { setInput(input); }
+    Lexico(const std::string &input) { setInput(input); }
+    Lexico() : position(0), input("") { }
 
-    void setInput(const std::string input);
+    void setInput(const std::string &input);
     void setPosition(unsigned pos) { position = pos; }
-    Token *nextToken() throw (LexicalError);
+    Token *nextToken();
 
 private:
     unsigned position;
