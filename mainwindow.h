@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "Semantico.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -14,7 +16,6 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    static void console(const std::string text);
 
 private slots:
     void on_Abrir_clicked();
@@ -27,6 +28,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    void show_simbol_table(Semantico semantico);
 };
 
 #endif // MAINWINDOW_H

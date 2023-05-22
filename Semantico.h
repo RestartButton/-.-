@@ -6,8 +6,6 @@
 #include <list>
 #include <stack>
 #include "Tabela.h"
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
 
 class Semantico
 {

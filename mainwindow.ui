@@ -89,6 +89,9 @@
          </widget>
         </item>
         <item>
+         <widget class="QTableView" name="Tabela"/>
+        </item>
+        <item>
          <widget class="QPushButton" name="Correr">
           <property name="minimumSize">
            <size>

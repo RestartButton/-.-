@@ -2,30 +2,38 @@
 #include "ui_mainwindow.h"
 #include <QFile>
 #include <QFileDialog>
+#include <QStandardItemModel>
+#include <QVector>
 #include <QTextStream>
 
 #include "Lexico.h"
 #include "Sintatico.h"
 #include "Semantico.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    auto model = new QStandardItemModel();
+    model->setColumnCount(7);
+    ui->Tabela->setModel(model);
+
+    model->setHorizontalHeaderItem(0, new QStandardItem("Nome"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("Escopo"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("Func"));
+    model->setHorizontalHeaderItem(3, new QStandardItem("Vet"));
+    model->setHorizontalHeaderItem(4, new QStandardItem("Usada"));
+    model->setHorizontalHeaderItem(5, new QStandardItem("Inicializada"));
+    model->setHorizontalHeaderItem(6, new QStandardItem("Tipo"));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-/*
-void MainWindow::console(const std::string text){
-    QString qtext = QString::fromStdString(text);
-    ui->Terminal->setPlainText(text);
-}
-*/
+
 void MainWindow::on_Abrir_clicked()
 {
     QString fileContent;
@@ -108,6 +116,7 @@ void MainWindow::on_Correr_clicked()
         output += "Comando aceito!\n";
 
         ui->Terminal->setPlainText(QString(output.c_str()));
+        show_simbol_table(semantico);
     } catch ( LexicalError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
@@ -120,7 +129,40 @@ void MainWindow::on_Correr_clicked()
     }
 }
 
+void MainWindow::show_simbol_table(Semantico semantico)
+{
+    QStandardItemModel* model = dynamic_cast<QStandardItemModel*>(ui->Tabela->model());
+    model->clear();
+
+    model->setHorizontalHeaderItem(0, new QStandardItem("Nome"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("Escopo"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("Func"));
+    model->setHorizontalHeaderItem(3, new QStandardItem("Vet"));
+    model->setHorizontalHeaderItem(4, new QStandardItem("Usada"));
+    model->setHorizontalHeaderItem(5, new QStandardItem("Inicializada"));
+    model->setHorizontalHeaderItem(6, new QStandardItem("Tipo"));
+
+    QVector<Simbolo> data;
+
+    for( list<Simbolo>::iterator it = semantico.tabela_simbolos->begin(); it != semantico.tabela_simbolos->end(); it++) {
+        Simbolo simbolo = *it;
+        data.push_back(simbolo);
+    }
+
+    QList<QStandardItem*> rowData;
+    Q_FOREACH(const auto &item, data){
+        rowData.clear();
+        rowData << new QStandardItem(QString("%1").arg(QString::fromStdString(item.nome)));
+        rowData << new QStandardItem(QString("%1").arg(QString::fromStdString(item.escopo)));
+        rowData << new QStandardItem(QString("%1").arg(item.func));
+        rowData << new QStandardItem(QString("%1").arg(item.vet));
+        rowData << new QStandardItem(QString("%1").arg(item.usada));
+        rowData << new QStandardItem(QString("%1").arg(item.inic));
+        rowData << new QStandardItem(QString("%1").arg(QString::fromStdString(item.tipo)));
+        model->appendRow(rowData);
+    }
+}
+
 void MainWindow::on_tableView_activated(const QModelIndex &index)
 {
-
 }
