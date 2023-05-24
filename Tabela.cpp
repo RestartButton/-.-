@@ -103,7 +103,7 @@ int getParamPos( list<Simbolo> tabela, string var, string escopo ) {
     return -1;
 }
 
-Simbolo* getSimbolo( list<Simbolo> tabela, string var, string escopo ) {
+Simbolo* getSimbolo( list<Simbolo> &tabela, string var, string escopo ) {
     for( list<Simbolo>::iterator it = tabela.begin(); it != tabela.end(); it++) {
         if(it->nome == var && it->escopo == escopo) {
             return &*it;

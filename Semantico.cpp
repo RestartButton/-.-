@@ -14,12 +14,16 @@ Semantico::Semantico() {
     this->retorno_atual = "";
     this->lista_escopos->push("global");
     this->param_count = 0;
+    this->pseudo_escopo_count = 0;
 }
 
 void Semantico::executeAction(int action, const Token *token) throw (SemanticError)
 {
+    stack<string> temp = *(this->lista_escopos);
     cout << "Acao: " << action << ", Token: "  << token->getId() 
          << ", Lexema: " << token->getLexeme() << std::endl;
+
+    
 
     switch(action) {
         case 1: //declara variavel
@@ -34,7 +38,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                 temp.pop();
             }
             if(isDecla){
-                throw SemanticError("Variavel ja declarada neste escopo!", token->getPosition());
+                throw SemanticError("Variavel " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, temp.top(), false, false, false, false, false, false, false, 0);
@@ -55,7 +59,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                 temp.pop();
             }
             if(isDecla){
-                throw SemanticError("Funcao ja declarada neste escopo!", token->getPosition());
+                throw SemanticError("Funcao " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->retorno_atual, temp.top(), true, false, false, false, false, false, false, 0);
@@ -99,7 +103,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                 break;
             }
             if(isDecla) {
-                throw SemanticError("Variavel ja declarada neste escopo!", token->getPosition());
+                throw SemanticError("Variavel " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, this->lescopo_aberto, false, false, false, false, true, false, false, ++this->param_count);
             }
@@ -117,7 +121,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                 temp.pop();
             }
             if(isDecla){
-                throw SemanticError("Variavel ja declarada neste escopo!", token->getPosition());
+                throw SemanticError("Variavel " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, temp.top(), false, false, false, true, false, false, false, 0);
@@ -127,7 +131,10 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         }
         case 9: //inicializa vet //cpah outros???
         {
+            cout << this->simbolo_atual->nome << endl;
+            cout << this->simbolo_atual->inic << endl;
             this->simbolo_atual->inic = true;
+            cout << this->simbolo_atual->inic << endl;
             break;
         }
         case 10: //empilha variavel
@@ -137,19 +144,55 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             stack<string> temp = *(this->lista_escopos);
             while(!temp.empty()) {
                 if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
+                    this->simbolo_chamado = NULL;
                     this->simbolo_chamado = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
+                    this->simbolo_chamado->usada = true;
                     isDecla = true;
                     if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
                         isInici = true;
                     }
                     break;
                 }
+                temp.pop();
             }
             if(!isDecla){
-                throw SemanticError("Variavel nao declarada neste escopo!", token->getPosition());
+                throw SemanticError(("Variavel " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
             }
             if(!isInici){
                 this->lista_warnings->push("Variavel " + token->getLexeme() + " usada sem ser inicializada!");
+            }
+            break;
+        }
+        case 11: //declara pseudo escopo
+        {
+            stack<string> temp = *(this->lista_escopos);
+            string pseudo_nome = "pseudo" + std::to_string(this->pseudo_escopo_count++);
+            declaraSimbolo( *(this->tabela_simbolos), pseudo_nome, this->retorno_atual, temp.top(), false, false, false, false, false, true, true, 0);
+            this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), pseudo_nome, temp.top() );
+            this->lescopo_aberto = pseudo_nome;
+            break;
+        }
+        case 12: //usa func
+        {
+            bool isDecla = false;
+            bool isInici = false;
+            stack<string> temp = *(this->lista_escopos);
+            while(!temp.empty()) {
+                if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
+                    getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() )->usada = true;
+                    isDecla = true;
+                    if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
+                        isInici = true;
+                    }
+                    break;
+                }
+                temp.pop();
+            }
+            if(!isDecla){
+                throw SemanticError(("Funcao " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
+            }
+            if(!isInici){
+                this->lista_warnings->push("Funcao " + token->getLexeme() + " usada sem ser inicializada!");
             }
             break;
         }

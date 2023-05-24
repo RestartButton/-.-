@@ -23,6 +23,7 @@ private:
     string lescopo_aberto;
 
     int param_count;
+    int pseudo_escopo_count;
 };
 
 #endif
