@@ -131,10 +131,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         }
         case 9: //inicializa vet //cpah outros???
         {
-            cout << this->simbolo_atual->nome << endl;
-            cout << this->simbolo_atual->inic << endl;
             this->simbolo_atual->inic = true;
-            cout << this->simbolo_atual->inic << endl;
             break;
         }
         case 10: //empilha variavel
@@ -194,6 +191,13 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             if(!isInici){
                 this->lista_warnings->push("Funcao " + token->getLexeme() + " usada sem ser inicializada!");
             }
+            break;
+        }
+        case 13:
+        {
+            stack<string> temp = *(this->lista_escopos);
+            this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
+            this->simbolo_atual->inic = true;
             break;
         }
         case 99: //limpa comando

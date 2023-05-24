@@ -81,14 +81,12 @@ void MainWindow::on_Salvar_clicked()
         file.close();
 
 }
-#include <QDebug>
 void MainWindow::on_Correr_clicked()
 {
+    Lexico lexico = Lexico(ui->Codigo->toPlainText().toStdString());
+    Sintatico sintatico = Sintatico();
+    Semantico semantico = Semantico();
     try{
-        Lexico lexico = Lexico(ui->Codigo->toPlainText().toStdString());
-
-        Sintatico sintatico = Sintatico();
-        Semantico semantico = Semantico();
         sintatico.parse(&lexico, &semantico);
 
         std::string output = "";
@@ -103,14 +101,6 @@ void MainWindow::on_Correr_clicked()
                 output += "Variavel declarada mas nao utilizada: " + it->nome + "\n";
             }
             std::cout << it->nome << " "  << it->escopo << " "  << it->func << " "  <<  it->vet << " "  << it->usada << " " << it->inic << " \n";
-            qDebug() << QString("Nome: %1 | Escopo: %2 | Func: %3 | Vet: %4 | Usada: %5 | Inicializada: %6 | Tipo: %7")
-                        .arg(QString::fromStdString(it->nome))
-                        .arg(QString::fromStdString(it->escopo))
-                        .arg(it->func)
-                        .arg(it->vet)
-                        .arg(it->usada)
-                        .arg(it->inic)
-                        .arg(QString::fromStdString(it->tipo));
         }
 
         output += "Comando aceito!\n";
@@ -120,12 +110,15 @@ void MainWindow::on_Correr_clicked()
     } catch ( LexicalError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
+        show_simbol_table(semantico);
     } catch ( SyntaticError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
+        show_simbol_table(semantico);
     } catch ( SemanticError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
+        show_simbol_table(semantico);
     }
 }
 
