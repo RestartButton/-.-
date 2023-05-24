@@ -7,7 +7,7 @@ ParserName = Sintatico
 SemanticName = Semantico
 ScannerCaseSensitive = true
 ScannerTable = Full
-Input = String
+Input = Stream
 Parser = SLR
 #RegularDefinitions
 
@@ -123,7 +123,9 @@ escreva: ".---.-."
 <parametros>
 <func_retorno>
 <chamada_func>
+<atribuicao>
 <chamada_vet>
+
 
 <chamada_parametros>
 <atrib>
@@ -167,7 +169,7 @@ escreva: ".---.-."
 #Grammar
 <programa> ::= <lista_comando> <comando> | <comando>;
 <lista_comando> ::= <lista_comando> <comando> | <comando>;
-<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func>;
+<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func> | <atribuicao>;
 
 <comentario> ::= comentario | comentario_multiplo;
 <console_cmd> ::= leia abre_par var_id fecha_par endl | escreva abre_par <atrib> fecha_par endl;
@@ -182,7 +184,9 @@ escreva: ".---.-."
 <parametros> ::= <parametros> virg <tipos> #3 var_id #7| <tipos> #3 var_id #7;
 <func_retorno> ::= return <exp> endl;
 <chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl | func_id #12 abre_par fecha_par endl ;
+<atribuicao> ::= var_id #13 atrib <atrib> endl;
 <chamada_vet> ::= var_id abre_col <exp> fecha_col;
+
 
 <chamada_parametros> ::= <chamada_parametros> virg var_id | var_id | <chamada_parametros> virg <chamada_vet> | <chamada_vet>  ;
 <atrib> ::= <exp> | lit_char | lit_str | true | false;
@@ -209,7 +213,7 @@ escreva: ".---.-."
 <exp10> ::= <literal> | var_id #10 | <chamada_vet> | abre_par <exp> fecha_par;
 <literal> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex;
 
-<op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | atrib | difere; 
+<op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | igual_a | difere; 
 <op_neg> ::= menos | bwinv | not;
 <op_bitwise> ::= shfl | shfr;
 <op_arit_baixa> ::= soma | sub;
