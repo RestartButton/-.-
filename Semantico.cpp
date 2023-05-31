@@ -8,6 +8,7 @@ Semantico::Semantico() {
     this->tabela_simbolos = new list<Simbolo>;
     this->lista_escopos = new stack<string>;
     this->lista_warnings = new stack<string>;
+    this->codigo_assembly = ".data\n.text\n";
     this->simbolo_atual = NULL;
     this->simbolo_chamado = NULL;
     this->tipo_atual = "";
@@ -81,7 +82,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             this->lescopo_aberto = "";
             break;
         }
-        case 5: //fecha escopo
+        case 5: //fecha escopo (sem jump)
         {
             this->lista_escopos->pop();
             this->simbolo_atual = NULL;
@@ -200,6 +201,16 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             this->simbolo_atual->inic = true;
             break;
         }
+        case 14: //fecha escopo (com jump)
+        {
+            this->lista_escopos->pop();
+            this->simbolo_atual = NULL;
+            this->simbolo_chamado = NULL;
+            this->tipo_atual = "";
+            this->retorno_atual = "";
+            this->geraCodigo("R" + to_string(this->pseudo_escopo_count) + ":", ".text");
+            break;
+        }
         case 99: //limpa comando
         {
             this->simbolo_atual = NULL;
@@ -210,5 +221,30 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             break;
         }
     }
+}
+
+void Semantico::geraCodigo(string instrucao, string onde) {
+    if (onde == ".data") {
+        size_t posicao = this->codigo_assembly.find(".text");
+        if (posicao != std::string::npos) {
+            this->codigo_assembly.insert(posicao, instrucao + "\n");
+        }
+    } else {
+        this->codigo_assembly += instrucao + "\n";
+    }
+}
+
+string Semantico::getAssembly() {
+    string resultado = this->codigo_assembly;
+
+    if (!resultado.empty()) {
+        while (resultado.back() == '\n') {
+            resultado.pop_back();
+            if (resultado.empty()) {
+                break;
+            }
+        }
+    }
+    return resultado;
 }
 

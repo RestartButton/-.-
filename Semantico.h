@@ -14,10 +14,13 @@ public:
     void executeAction(int action, const Token *token) throw (SemanticError);
     list<Simbolo>* tabela_simbolos;
     stack<string>* lista_warnings;
+    string getAssembly();
 private:
+    void geraCodigo(string instrucao, string onde);
     stack<string>* lista_escopos;
     Simbolo* simbolo_atual;
     Simbolo* simbolo_chamado;
+    string codigo_assembly;
     string tipo_atual;
     string retorno_atual;
     string lescopo_aberto;
