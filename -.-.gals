@@ -191,9 +191,9 @@ escreva: ".---.-."
 <chamada_parametros> ::= <chamada_parametros> virg var_id | var_id | <chamada_parametros> virg <chamada_vet> | <chamada_vet>  ;
 <atrib> ::= <exp> | lit_char | lit_str | true | false;
 
-<condicional> ::= if #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | if #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 else #11 abre_cha #4 <lista_comando> fecha_cha #5;
-<loop> ::= while #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | do #11 abre_cha #4 <lista_comando> fecha_cha #5 while abre_par <condicao> fecha_par;
-<for> ::= for #11 abre_par <condicao_for> fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
+<condicional> ::= if #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #14 | if #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #14 else #11 abre_cha #4 <lista_comando> fecha_cha #5;
+<loop> ::= while #11 abre_par <condicao> fecha_par abre_cha #4 <lista_comando> fecha_cha #14 | do #11 abre_cha #4 <lista_comando> fecha_cha #14 while abre_par <condicao> fecha_par;
+<for> ::= for #11 abre_par <condicao_for> fecha_par abre_cha #4 <lista_comando> fecha_cha #14;
 <condicao_for> ::= <inicio_for> endl <fim_for> endl <incremento>;
 <inicio_for> ::= <declaracao_var>;
 <fim_for> ::= <exp>;
