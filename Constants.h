@@ -71,7 +71,7 @@ enum TokenId
     t_escreva = 65
 };
 
-const int STATES_COUNT = 94;
+const int STATES_COUNT = 96;
 
 extern int SCANNER_TABLE[STATES_COUNT][256];
 
@@ -88,10 +88,10 @@ const int ACCEPT = 3;
 const int GO_TO  = 4;
 const int ERROR  = 5;
 
-extern const int PARSER_TABLE[264][215][2];
+extern const int PARSER_TABLE[268][215][2];
 
 extern const int PRODUCTIONS[124][2];
 
-extern const char *PARSER_ERROR[264];
+extern const char *PARSER_ERROR[268];
 
 #endif

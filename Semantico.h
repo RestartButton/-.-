@@ -24,9 +24,15 @@ private:
     string tipo_atual;
     string retorno_atual;
     string lescopo_aberto;
+    string part_instru;
+    string vetor_chamado;
 
     int param_count;
     int pseudo_escopo_count;
+
+    bool atribuindo;
+    bool prim_elem_exp;
+    bool vetorando;
 };
 
 #endif

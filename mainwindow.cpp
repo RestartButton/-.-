@@ -38,25 +38,25 @@ void MainWindow::on_Abrir_clicked()
 {
     QString fileContent;
 
-       QString filename= QFileDialog::getOpenFileName(this, "Choose File");
+    QString filename= QFileDialog::getOpenFileName(this, "Choose File");
 
 
-      if(filename.isEmpty())
-          return;
+    if(filename.isEmpty())
+      return;
 
-      QFile file(filename);
+    QFile file(filename);
 
-      if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
-          return;
+    if (!file.open(QIODevice::ReadWrite | QIODevice::Text))
+      return;
 
-      QTextStream in(&file);
+    QTextStream in(&file);
 
-      fileContent = in.readAll();
+    fileContent = in.readAll();
 
-      file.close();
+    file.close();
 
-      ui->Codigo->clear();
-      ui->Codigo->setPlainText(fileContent);
+    ui->Codigo->clear();
+    ui->Codigo->setPlainText(fileContent);
 }
 
 void MainWindow::on_Salvar_clicked()
@@ -64,21 +64,21 @@ void MainWindow::on_Salvar_clicked()
 
     QString filename= QFileDialog::getSaveFileName(this, "Save As");
 
-        if (filename.isEmpty())
-            return;
+    if (filename.isEmpty())
+        return;
 
-        QFile file(filename);
+    QFile file(filename);
 
 
-        //Open the file
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-            return;
+    //Open the file
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
 
-        QTextStream out(&file);
+    QTextStream out(&file);
 
-        out << ui->Codigo->toPlainText() << "\n";
+    out << ui->Codigo->toPlainText() << "\n";
 
-        file.close();
+    file.close();
 
 }
 void MainWindow::on_Correr_clicked()
@@ -107,6 +107,9 @@ void MainWindow::on_Correr_clicked()
 
         ui->Terminal->setPlainText(QString(output.c_str()));
         show_simbol_table(semantico);
+        string data = semantico.getAssembly();
+        cout<< data;
+        ui->CodAssem->setPlainText(data.c_str());
     } catch ( LexicalError e) {
         ui->Terminal->clear();
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
@@ -120,6 +123,7 @@ void MainWindow::on_Correr_clicked()
         ui->Terminal->setPlainText(QString("Comando nao identificado! \n%1").arg(e.getMessage()));
         show_simbol_table(semantico);
     }
+
 }
 
 void MainWindow::show_simbol_table(Semantico semantico)
@@ -158,4 +162,25 @@ void MainWindow::show_simbol_table(Semantico semantico)
 
 void MainWindow::on_tableView_activated(const QModelIndex &index)
 {
+}
+
+void MainWindow::on_SavAssem_clicked()
+{
+    QString filename= QFileDialog::getSaveFileName(this, "Save As");
+
+    if (filename.isEmpty())
+        return;
+
+    QFile file(filename + ".asm");
+
+
+    //Open the file
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
+    QTextStream out(&file);
+
+    out << ui->CodAssem->toPlainText() << "\n";
+
+    file.close();
 }

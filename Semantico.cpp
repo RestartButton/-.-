@@ -16,13 +16,18 @@ Semantico::Semantico() {
     this->lista_escopos->push("global");
     this->param_count = 0;
     this->pseudo_escopo_count = 0;
+    this->atribuindo = false;
+    this->prim_elem_exp = true;
+    this->part_instru = "";
+    this->vetor_chamado = "";
+    this->vetorando = false;
 }
 
 void Semantico::executeAction(int action, const Token *token) throw (SemanticError)
 {
     stack<string> temp = *(this->lista_escopos);
     cout << "Acao: " << action << ", Token: "  << token->getId() 
-         << ", Lexema: " << token->getLexeme() << std::endl;
+         << ", Lexema: " << token->getLexeme() << endl;
 
     
 
@@ -30,20 +35,20 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         case 1: //declara variavel
         {   
             bool isDecla = false;
-            stack<string> temp = *(this->lista_escopos);
-            while(!temp.empty()) {
-                if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
-                    isDecla = true;
-                    break;
-                }
-                temp.pop();
+
+            if(isDec(*(this->tabela_simbolos), token->getLexeme(), this->lista_escopos->top())){
+                isDecla = true;
+                break;
             }
+
             if(isDecla){
                 throw SemanticError("Variavel " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, temp.top(), false, false, false, false, false, false, false, 0);
                 this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
+                string instruction = token->getLexeme() + ": 0";
+                geraCodigo(instruction,".data");
             }
 
             break;
@@ -113,16 +118,14 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         case 8: //declara vet
         {
             bool isDecla = false;
-            stack<string> temp = *(this->lista_escopos);
-            while(!temp.empty()) {
-                if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
-                    isDecla = true;
-                    break;
-                }
-                temp.pop();
+
+            if(isDec(*(this->tabela_simbolos), token->getLexeme(), this->lista_escopos->top())){
+                isDecla = true;
+                break;
             }
+
             if(isDecla){
-                throw SemanticError("Variavel " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
+                throw SemanticError("Vetor " + token->getLexeme() +  " ja declarada neste escopo!", token->getPosition());
             } else {
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, temp.top(), false, false, false, true, false, false, false, 0);
@@ -132,6 +135,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         }
         case 9: //inicializa vet //cpah outros???
         {
+            this->atribuindo = true;
             this->simbolo_atual->inic = true;
             break;
         }
@@ -149,15 +153,26 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                     if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
                         isInici = true;
                     }
+
+                    if(this->atribuindo || this->vetorando){
+                        if(this->prim_elem_exp){
+                            string instruction = "\tLD " + token->getLexeme();
+                            geraCodigo(instruction, ".text");
+                        } else {
+                            string instruction = this->part_instru + token->getLexeme();
+                            geraCodigo(instruction, ".text");
+                        }
+                    }
+
                     break;
                 }
                 temp.pop();
             }
-            if(!isDecla){
-                throw SemanticError(("Variavel " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
-            }
             if(!isInici){
                 this->lista_warnings->push("Variavel " + token->getLexeme() + " usada sem ser inicializada!");
+            }
+            if(!isDecla){
+                throw SemanticError(("Variavel " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
             }
             break;
         }
@@ -182,19 +197,20 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                     if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
                         isInici = true;
                     }
+
                     break;
                 }
                 temp.pop();
             }
-            if(!isDecla){
-                throw SemanticError(("Funcao " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
-            }
             if(!isInici){
                 this->lista_warnings->push("Funcao " + token->getLexeme() + " usada sem ser inicializada!");
             }
+            if(!isDecla){
+                throw SemanticError(("Funcao " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
+            }
             break;
         }
-        case 13:
+        case 13: //atribuição
         {
             stack<string> temp = *(this->lista_escopos);
             this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
@@ -211,13 +227,102 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             this->geraCodigo("R" + to_string(this->pseudo_escopo_count) + ":", ".text");
             break;
         }
+        case 15: //literal inteiro
+        {
+            if(this->atribuindo || this->vetorando){
+                cout << "ENTROU" << endl;
+                if(this->prim_elem_exp){
+                    this->prim_elem_exp = false;
+                    string instruction = "\tLDI " + token->getLexeme();
+                    geraCodigo(instruction, ".text");
+                } else {
+                    string instruction = this->part_instru + "I " + token->getLexeme();
+                    geraCodigo(instruction, ".text");
+                }
+            }
+            break;
+        }
+        case 16: //literal binario
+        {
+            break;
+        }
+        case 17: //soma
+        {
+            if(this->atribuindo || this->vetorando) {
+                this->part_instru = "\tADD";
+            }
+            break;
+
+        }
+        case 18: //subtracao
+        {
+            if(this->atribuindo || this->vetorando) {
+                this->part_instru = "\tSUB";
+            }
+            break;
+        }
+        case 19: //chamada vetor
+        {
+            bool isDecla = false;
+            bool isInici = false;
+            stack<string> temp = *(this->lista_escopos);
+            while(!temp.empty()) {
+                if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
+                    this->vetor_chamado = token->getLexeme();
+                    isDecla = true;
+                    if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
+                        isInici = true;
+                    }
+                    break;
+                }
+                temp.pop();
+            }
+            if(!isInici){
+                this->lista_warnings->push("Vetor " + token->getLexeme() + " usada sem ser inicializada!");
+            }
+            if(!isDecla){
+                throw SemanticError(("Vetor " + token->getLexeme() +  " nao declarada neste escopo!"), token->getPosition());
+            }
+            break;
+        }
+        case 20: //iniciando indice
+        {
+            this->vetorando = true;
+            break;
+        }
+        case 21: //carregando vetor
+        {
+            geraCodigo("\tSTO $indr",".text");
+            string instruction = "\tLDV " + this->vetor_chamado;
+            geraCodigo(instruction, ".text");
+            break;
+        }
+        case 22: //salva vetor
+        {
+            break;
+        }
         case 99: //limpa comando
         {
+            if(this->atribuindo) {
+                string instruction = "\tSTO " + this->simbolo_atual->nome;
+                geraCodigo(instruction, ".text");
+            }
+
+
             this->simbolo_atual = NULL;
             this->simbolo_chamado = NULL;
             this->tipo_atual = "";
             this->lescopo_aberto = "";
             this->param_count = 0;
+
+
+            this->atribuindo = false;
+            this->prim_elem_exp = true;
+            this->part_instru = "";
+
+            this->vetor_chamado = "";
+            this->vetorando = false;
+
             break;
         }
     }

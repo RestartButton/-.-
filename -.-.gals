@@ -61,7 +61,7 @@ xor:"^"
 
 pontpont: ".."
 endl: "?"
-pont: "°"
+pont: "ï¿½"
 virg: "'"
 
 
@@ -185,7 +185,7 @@ escreva: ".---.-."
 <func_retorno> ::= return <exp> endl;
 <chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl | func_id #12 abre_par fecha_par endl ;
 <atribuicao> ::= var_id #13 atrib <atrib> endl;
-<chamada_vet> ::= var_id abre_col <exp> fecha_col;
+<chamada_vet> ::= var_id #19 abre_col #20 <exp> fecha_col #21;
 
 
 <chamada_parametros> ::= <chamada_parametros> virg var_id | var_id | <chamada_parametros> virg <chamada_vet> | <chamada_vet>  ;
@@ -211,12 +211,12 @@ escreva: ".---.-."
 <exp8> ::= <exp8> <op_arit_alta> <exp9> | <exp9> ;
 <exp9> ::= <op_neg> <exp10> | <exp10>;
 <exp10> ::= <literal> | var_id #10 | <chamada_vet> | abre_par <exp> fecha_par;
-<literal> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex;
+<literal> ::= lit_int #15 | lit_float | lit_double | lit_bin #16 | lit_hex;
 
 <op_rel> ::= maior_q | menor_q | maior_ig | menor_ig | igual_a | difere; 
 <op_neg> ::= menos | bwinv | not;
 <op_bitwise> ::= shfl | shfr;
-<op_arit_baixa> ::= soma | sub;
+<op_arit_baixa> ::= soma #17 | sub #18;
 <op_arit_alta> ::= mult | div | mod;
 
 <retorno> ::= void | <tipos>;
