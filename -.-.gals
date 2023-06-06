@@ -123,6 +123,7 @@ escreva: ".---.-."
 <parametros>
 <func_retorno>
 <chamada_func>
+<atribuicao_vet>
 <atribuicao>
 <chamada_vet>
 
@@ -169,10 +170,10 @@ escreva: ".---.-."
 #Grammar
 <programa> ::= <lista_comando> <comando> | <comando>;
 <lista_comando> ::= <lista_comando> <comando> | <comando>;
-<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func> | <atribuicao>;
+<comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func> | <atribuicao> | <atribuicao_vet>;
 
 <comentario> ::= comentario | comentario_multiplo;
-<console_cmd> ::= leia abre_par var_id fecha_par endl | escreva abre_par <atrib> fecha_par endl;
+<console_cmd> ::= leia abre_par var_id fecha_par endl #99 | escreva abre_par <atrib> fecha_par endl #99;
 
 <expressao> ::= <exp> endl #99;
 <declaracao> ::= <declaracao_var> endl #99 | <declaracao_vet> endl #99 | <declaracao_func>;
@@ -182,9 +183,10 @@ escreva: ".---.-."
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;
 <declaracao_func> ::= <retorno> #6 func_id #2 abre_par <parametros> fecha_par endl #99 | <retorno> #6 func_id #2 abre_par <parametros> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | <retorno> #6 func_id #2 abre_par fecha_par endl #99 | <retorno> #6 func_id #2 abre_par fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
 <parametros> ::= <parametros> virg <tipos> #3 var_id #7| <tipos> #3 var_id #7;
-<func_retorno> ::= return <exp> endl;
-<chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl | func_id #12 abre_par fecha_par endl ;
-<atribuicao> ::= var_id #13 atrib <atrib> endl;
+<func_retorno> ::= return <exp> endl #99;
+<chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl #99 | func_id #12 abre_par fecha_par endl #99 ;
+<atribuicao_vet> ::= var_id #23 abre_col #20 <exp> fecha_col atrib <atrib> #22 endl #99;
+<atribuicao> ::= var_id #13 atrib <atrib> endl #99;
 <chamada_vet> ::= var_id #19 abre_col #20 <exp> fecha_col #21;
 
 

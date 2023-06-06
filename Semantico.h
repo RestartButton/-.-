@@ -29,8 +29,10 @@ private:
 
     int param_count;
     int pseudo_escopo_count;
+    int temp_count;
 
     bool atribuindo;
+    bool atribuindo_vet;
     bool prim_elem_exp;
     bool vetorando;
 };

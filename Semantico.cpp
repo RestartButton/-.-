@@ -230,7 +230,6 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         case 15: //literal inteiro
         {
             if(this->atribuindo || this->vetorando){
-                cout << "ENTROU" << endl;
                 if(this->prim_elem_exp){
                     this->prim_elem_exp = false;
                     string instruction = "\tLDI " + token->getLexeme();
@@ -268,7 +267,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             stack<string> temp = *(this->lista_escopos);
             while(!temp.empty()) {
                 if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
-                    this->vetor_chamado = token->getLexeme();
+                    this->vetor_chamado = token->getLexeme(); //THE DO!
                     isDecla = true;
                     if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
                         isInici = true;
@@ -299,7 +298,18 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         }
         case 22: //salva vetor
         {
+                
+            if(this->atribuindo_vet){
+                geraCodigo("\tLD TEMP2\n\tSTO $indr",".text");
+            } else {
+                geraCodigo("\tLD TEMP1\n\tSTO $indr",".text");
+            }
+
             break;
+        }
+        case 23: //atribuição vetor
+        {
+
         }
         case 99: //limpa comando
         {
