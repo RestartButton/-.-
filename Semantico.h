@@ -5,6 +5,7 @@
 #include "SemanticError.h"
 #include <list>
 #include <stack>
+#include <deque>
 #include "Tabela.h"
 
 class Semantico
@@ -18,18 +19,19 @@ public:
 private:
     void geraCodigo(string instrucao, string onde);
     stack<string>* lista_escopos;
+    deque<string>* part_instru;
     Simbolo* simbolo_atual;
     Simbolo* simbolo_chamado;
     string codigo_assembly;
     string tipo_atual;
     string retorno_atual;
     string lescopo_aberto;
-    string part_instru;
     string vetor_chamado;
 
     int param_count;
     int pseudo_escopo_count;
     int temp_count;
+    int exp_vet_count;
 
     bool atribuindo;
     bool atribuindo_vet;

@@ -185,8 +185,8 @@ escreva: ".---.-."
 <parametros> ::= <parametros> virg <tipos> #3 var_id #7| <tipos> #3 var_id #7;
 <func_retorno> ::= return <exp> endl #99;
 <chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl #99 | func_id #12 abre_par fecha_par endl #99 ;
-<atribuicao_vet> ::= var_id #23 abre_col #20 <exp> fecha_col atrib <atrib> #22 endl #99;
-<atribuicao> ::= var_id #13 atrib <atrib> endl #99;
+<atribuicao_vet> ::= var_id #23 abre_col #20 <exp> fecha_col atrib #24 <atrib> endl #99;
+<atribuicao> ::= var_id #13 atrib #9 <atrib> endl #99;
 <chamada_vet> ::= var_id #19 abre_col #20 <exp> fecha_col #21;
 
 
