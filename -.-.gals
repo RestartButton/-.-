@@ -141,6 +141,7 @@ escreva: ".---.-."
 <incremento>
 
 <console_cmd>
+<escreva_param>
 
 <exp>
 <exp1>
@@ -173,19 +174,20 @@ escreva: ".---.-."
 <comando> ::= <comentario> | <declaracao> | <condicional> | <loop> | <for> | <expressao> | <func_retorno> | <console_cmd> |  <chamada_func> | <atribuicao> | <atribuicao_vet>;
 
 <comentario> ::= comentario | comentario_multiplo;
-<console_cmd> ::= leia abre_par var_id fecha_par endl #99 | escreva abre_par <atrib> fecha_par endl #99;
+<console_cmd> ::= leia abre_par var_id#23 fecha_par endl #99 | escreva abre_par <escreva_param> #25 fecha_par endl #99 | escreva abre_par var_id #26 fecha_par endl #99;
+<escreva_param> ::= lit_int | lit_float | lit_double | lit_bin | lit_hex | lit_char | lit_str | true | false;
 
 <expressao> ::= <exp> endl #99;
 <declaracao> ::= <declaracao_var> endl #99 | <declaracao_vet> endl #99 | <declaracao_func>;
 <declaracao_var> ::= <tipos> #3 var_id #1 | <tipos> #3 var_id #1 atrib #9 <atrib>  | <tipos> #3 var_id #1 virg <lista_var>;
 <lista_var> ::= <lista_var> virg var_id #1 | var_id #1;
-<declaracao_vet> ::= <tipos> #3 var_id #8 abre_col <exp> fecha_col | <tipos> #3 var_id #8 abre_col <exp> fecha_col atrib #9 abre_cha <lista_exp> fecha_cha;
+<declaracao_vet> ::= <tipos> #3 var_id #8 abre_col lit_int #22 fecha_col | <tipos> #3 var_id #8 abre_col lit_int #22 fecha_col atrib #9 abre_cha <lista_exp> fecha_cha;
 <lista_exp> ::= <lista_exp> virg <exp> | <exp>;
 <declaracao_func> ::= <retorno> #6 func_id #2 abre_par <parametros> fecha_par endl #99 | <retorno> #6 func_id #2 abre_par <parametros> fecha_par abre_cha #4 <lista_comando> fecha_cha #5 | <retorno> #6 func_id #2 abre_par fecha_par endl #99 | <retorno> #6 func_id #2 abre_par fecha_par abre_cha #4 <lista_comando> fecha_cha #5;
 <parametros> ::= <parametros> virg <tipos> #3 var_id #7| <tipos> #3 var_id #7;
 <func_retorno> ::= return <exp> endl #99;
 <chamada_func> ::= func_id #12 abre_par <chamada_parametros> fecha_par endl #99 | func_id #12 abre_par fecha_par endl #99 ;
-<atribuicao_vet> ::= var_id #23 abre_col #20 <exp> fecha_col atrib #24 <atrib> endl #99;
+<atribuicao_vet> ::= var_id #19 abre_col #20 <exp> fecha_col atrib #24 <atrib> endl #99;
 <atribuicao> ::= var_id #13 atrib #9 <atrib> endl #99;
 <chamada_vet> ::= var_id #19 abre_col #20 <exp> fecha_col #21;
 

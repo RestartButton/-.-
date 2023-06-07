@@ -79,7 +79,7 @@ extern int TOKEN_STATE[STATES_COUNT];
 
 extern const char *SCANNER_ERROR[STATES_COUNT];
 
-const int FIRST_SEMANTIC_ACTION = 115;
+const int FIRST_SEMANTIC_ACTION = 117;
 
 const int SHIFT  = 0;
 const int REDUCE = 1;
@@ -88,10 +88,10 @@ const int ACCEPT = 3;
 const int GO_TO  = 4;
 const int ERROR  = 5;
 
-extern const int PARSER_TABLE[268][215][2];
+extern const int PARSER_TABLE[306][217][2];
 
-extern const int PRODUCTIONS[124][2];
+extern const int PRODUCTIONS[136][2];
 
-extern const char *PARSER_ERROR[268];
+extern const char *PARSER_ERROR[306];
 
 #endif

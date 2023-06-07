@@ -27,15 +27,15 @@ private:
     string retorno_atual;
     string lescopo_aberto;
     string vetor_chamado;
+    string indice_resultado;
 
     int param_count;
     int pseudo_escopo_count;
     int temp_count;
-    int exp_vet_count;
+    int prim_elem_exp;
 
     bool atribuindo;
     bool atribuindo_vet;
-    bool prim_elem_exp;
     bool vetorando;
 };
 

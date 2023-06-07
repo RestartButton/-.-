@@ -6,21 +6,32 @@ using namespace std;
 
 Semantico::Semantico() {
     this->tabela_simbolos = new list<Simbolo>;
-    this->lista_escopos = new stack<string>;
     this->lista_warnings = new stack<string>;
+
+    this->lista_escopos = new stack<string>;
     this->part_instru = new deque<string>;
-    this->codigo_assembly = ".data\n.text\n";
+
     this->simbolo_atual = NULL;
     this->simbolo_chamado = NULL;
+
+    this->codigo_assembly = ".data\n\tINDICE: 0\n\tTEMP1: 0\n\tTEMP2: 0\n\tTEMP3: 0\n\tTEMP4: 0\n\tTEMP5: 0\n\tTEMP6: 0\n\tTEMP7: 0\n\tTEMP8: 0\n.text\n";
     this->tipo_atual = "";
     this->retorno_atual = "";
-    this->lista_escopos->push("global");
+    this->lescopo_aberto = "";
+    this->vetor_chamado = "";
+    this->indice_resultado = "";
+
     this->param_count = 0;
     this->pseudo_escopo_count = 0;
+    this->temp_count = 1;
+    this->prim_elem_exp = 0;
+
     this->atribuindo = false;
-    this->prim_elem_exp = true;
-    this->vetor_chamado = "";
+    this->atribuindo_vet = false;
     this->vetorando = false;
+    
+    this->lista_escopos->push("global");
+
 }
 
 void Semantico::executeAction(int action, const Token *token) throw (SemanticError)
@@ -47,7 +58,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
                 temp = *(this->lista_escopos);
                 declaraSimbolo( *(this->tabela_simbolos), token->getLexeme(), this->tipo_atual, temp.top(), false, false, false, false, false, false, false, 0);
                 this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
-                string instruction = token->getLexeme() + ": 0";
+                string instruction = "\t" + token->getLexeme() + ": 0";
                 geraCodigo(instruction,".data");
             }
 
@@ -135,8 +146,10 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         }
         case 9: //inicializa vet //cpah outros???
         {
+            this->indice_resultado = to_string(this->temp_count);
             this->atribuindo = true;
             this->simbolo_atual->inic = true;
+            this->prim_elem_exp++;
             break;
         }
         case 10: //empilha variavel
@@ -156,6 +169,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
 
                     if(this->atribuindo || this->vetorando){
                         if(this->prim_elem_exp){
+                            this->prim_elem_exp--;
                             string instruction = "\tLD " + token->getLexeme();
                             geraCodigo(instruction, ".text");
                         } else {
@@ -232,16 +246,21 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
         {
             if(this->atribuindo || this->vetorando){
                 if(this->prim_elem_exp){
-                    this->prim_elem_exp = false;
+                    this->prim_elem_exp--;
                     string instruction = "\tLDI " + token->getLexeme();
                     geraCodigo(instruction, ".text");
                 } else {
-                    string instruction = this->part_instru->front() + "I " + token->getLexeme();
-                    this->part_instru->pop_front();
+                    string instruction = this->part_instru->back() + "I " + token->getLexeme();
+                    this->part_instru->pop_back();
                     geraCodigo(instruction, ".text");
                 }
+                // string instruction = "\tSTO TEMP" + to_string(this->temp_count;
+                // geraCodigo(instruction, ".text");
             } else if(this->atribuindo_vet){
-                
+                this->prim_elem_exp--;
+                string instruction = "\tLDI " + token->getLexeme() + "\n\tSTO TEMP" + std::to_string(this->temp_count);
+                geraCodigo(instruction, ".text");
+                this->temp_count++;
             }
 
             break;
@@ -273,6 +292,7 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             while(!temp.empty()) {
                 if(isDec(*(this->tabela_simbolos), token->getLexeme(), temp.top())){
                     this->vetor_chamado = token->getLexeme(); //THE DO!
+                    this->prim_elem_exp++;
                     isDecla = true;
                     if(isInit(*(this->tabela_simbolos), token->getLexeme(), temp.top())) {
                         isInici = true;
@@ -303,22 +323,45 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             geraCodigo(instruction, ".text");
             break;
         }
-        case 22:
+        case 22: // declara as posições do vetor
         {
+            string instruction = "\t" + this->simbolo_atual->nome + ": 0";
+
+            for(int i = 1; i < atoi(token->getLexeme().c_str()); i++){
+                instruction += ", 0";
+            }
+            geraCodigo(instruction, ".data");
 
             break;
         }
-        case 23: //atribuição vetor
+        case 23: //leia
         {
-            stack<string> temp = *(this->lista_escopos);
-            this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), token->getLexeme(), temp.top() );
-            this->simbolo_atual->inic = true;
+            string instruction = "\tLD $in_port\n\tSTO " + token->getLexeme();
+            geraCodigo(instruction,".text");
+            break;
         }
         case 24: //inicializa vet 
         {
-            geraCodigo("\tSTO TEMP1", ".text");
+            geraCodigo("\tSTO INDICE", ".text");
+            stack<string> temp = *(this->lista_escopos);
+            this->simbolo_atual = getSimbolo( *(this->tabela_simbolos), this->vetor_chamado, temp.top() );
             this->atribuindo_vet = true;
             this->simbolo_atual->inic = true;
+            this->prim_elem_exp++;
+            this->indice_resultado = to_string(this->temp_count);
+            this->vetorando = false;
+            break;
+        }
+        case 25: //escreva literal
+        {
+            string instruction = "\tLDI " + token->getLexeme() + "\n\tSTO $out_port";
+            geraCodigo(instruction,".text");
+            break;
+        }
+        case 26: //escreva variavel
+        {
+            string instruction = "\tLD " + token->getLexeme() + "\n\tSTO $out_port";
+            geraCodigo(instruction,".text");
             break;
         }
         case 99: //limpa comando
@@ -326,37 +369,39 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
             if(this->atribuindo) {
                 string instruction = "";
                 
-                if(this->temp_count > 0){
-                    instruction += "\tLD TEMP" + std::to_string(this->temp_count) + "\n";
-                    this->temp_count--;
-                    while(this->temp_count > 0) {
-                        instruction += "\tADD TEMP" + std::to_string(this->temp_count) + "\n";
-                        this->temp_count--;
-                    }
-                }
+                // if(this->temp_count > 0){
+                //     int i = 2;
+                //     instruction += "\tLD TEMP" + std::to_string(i) + "\n";
+                //     i++;
+                //     while(i <= this->temp_count) {
+                //         instruction += "\tADD TEMP" + std::to_string(i) + "\n";
+                //         i++;
+                //     }
+                // }
                 
                 instruction += "\tSTO " + this->simbolo_atual->nome;
                 geraCodigo(instruction, ".text");
             } else if(this->atribuindo_vet) {
                 string instruction = "";
-                
-                if(this->temp_count > 0){
-                    string result_index = std::to_string(this->temp_count);
-                    instruction += "\tLD TEMP" + std::to_string(this->temp_count) + "\n";
-                    this->temp_count--;
-                    while(this->temp_count > 1) {
-                        instruction += this->part_instru->front() + " TEMP" + std::to_string(this->temp_count) + "\n";
-                        this->part_instru->pop_front();
-                        this->temp_count--;
-                    }
-                    instruction += "\tSTO TEMP" + result_index + "\n";
-                    instruction += "\tLD TEMP1\n";
-                    instruction += "\tSTO $indr\n";
-                    instruction += "\tLD TEMP" + result_index + "\n";
 
+                if(this->temp_count > 0){
+                    int i = 1;
+                    instruction += "\tLD TEMP" + std::to_string(i) + "\n";
+                    i++;
+                    //if(this->temp_count >2) {
+                        while(i <= this->temp_count) {
+                            instruction += this->part_instru->front() + " TEMP" + std::to_string(i) + "\n";
+                            this->part_instru->pop_front();
+                            i++;
+                        }
+                        instruction += "\tSTO TEMP" + this->indice_resultado + "\n";
+                    //}
+                    instruction += "\tLD INDICE\n";
+                    instruction += "\tSTO $indr\n";
+                    instruction += "\tLD TEMP" + this->indice_resultado + "\n";
                 }
                 
-                instruction += "\tSTO " + this->simbolo_atual->nome;
+                instruction += "\tSTOV " + this->simbolo_atual->nome;
                 geraCodigo(instruction, ".text");
             }
 
@@ -369,10 +414,12 @@ void Semantico::executeAction(int action, const Token *token) throw (SemanticErr
 
 
             this->atribuindo = false;
-            this->prim_elem_exp = true;
+            this->prim_elem_exp = 0;
 
             this->vetor_chamado = "";
             this->vetorando = false;
+            this->temp_count = 1;
+            this->indice_resultado = "";
 
             break;
         }
